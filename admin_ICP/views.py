@@ -1,11 +1,16 @@
+import json
+
+from email import header
+from wsgiref import headers
 from .serializers import InterviewDetailsSerializer
 from .serializers import UserDetailsSerializer
 from rest_framework import generics
 from rest_framework import status
 from .models import User_Info, Interview_Info
 from rest_framework.response import Response
+from django.http import JsonResponse
+
 from rest_framework.decorators import api_view
-# from .emailnotifications import Notify
 import pytz
 import datetime
 from django.http import HttpResponse
@@ -47,10 +52,10 @@ def manageInterviewsList(request):
         serializer = InterviewDetailsSerializer(data=request.data)
         if serializer.is_valid() and serializer.checkCreateoverlapping():
             serializer.save()
-            newData = serializer.data
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print(serializer.error_messages)
-        return Response({'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def manageInterviewsDetail(request, pk):
